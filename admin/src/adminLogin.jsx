@@ -1,45 +1,44 @@
 // AdminLogin.js
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = 'https://ouscjkmgdsnzakairivo.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91c2Nqa21nZHNuemFrYWlyaXZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzY0MzYsImV4cCI6MjA3MTUxMjQzNn0.ii49ymR7Bi7WZTYOkYnE1-kJIlZ7DV5xR_tM3kbX-MU';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import { useAuth } from './AuthContext';
 
 const AdminLogin = () => {
+  const { signOut } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  const handleReturnToMainSite = async () => {
+    // Sign out any existing session
+    await signOut();
+    // Navigate to main site
+    navigate('/');
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-
       if (error) {
         throw error;
       }
-
       // Check if user is admin
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', data.user.id)
         .single();
-
       if (profileError || profile.role !== 'admin') {
         throw new Error('Not authorized as admin');
       }
-
       // Redirect to admin dashboard
       navigate('/admin/dashboard');
     } catch (err) {
@@ -59,7 +58,6 @@ const AdminLogin = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Login</h1>
           <p className="text-gray-600">Sign in to access the admin dashboard</p>
         </div>
-
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
             <div className="flex">
@@ -72,7 +70,6 @@ const AdminLogin = () => {
             </div>
           </div>
         )}
-
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -90,7 +87,6 @@ const AdminLogin = () => {
               placeholder="admin@example.com"
             />
           </div>
-
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -107,7 +103,6 @@ const AdminLogin = () => {
               placeholder="••••••••••"
             />
           </div>
-
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
@@ -120,14 +115,12 @@ const AdminLogin = () => {
                 Remember me
               </label>
             </div>
-
             <div className="text-sm">
               <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
                 Forgot your password?
               </a>
             </div>
           </div>
-
           <div>
             <button
               type="submit"
@@ -138,13 +131,15 @@ const AdminLogin = () => {
             </button>
           </div>
         </form>
-
         <div className="text-center mt-6">
           <p className="text-sm text-gray-600">
             Not an admin?{' '}
-            <a href="/" className="font-medium text-blue-600 hover:text-blue-500">
+            <button 
+              onClick={handleReturnToMainSite}
+              className="font-medium text-blue-600 hover:text-blue-500"
+            >
               Return to main site
-            </a>
+            </button>
           </p>
         </div>
       </div>

@@ -1,7 +1,18 @@
 // AdminSettings.js
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
-import './Admin.css';
+import './admin.css';
+import { 
+  FaTachometerAlt, 
+  FaHome, 
+  FaUsers, 
+  FaEnvelope, 
+  FaCog, 
+  FaTrash, 
+  FaFolderPlus, 
+  FaFolderMinus,
+  FaSignOutAlt
+} from 'react-icons/fa';
 
 const AdminSettings = () => {
   const [categories, setCategories] = useState([]);
@@ -28,7 +39,6 @@ const AdminSettings = () => {
         .from('categories')
         .select('*')
         .order('name');
-
       if (error) throw error;
       setCategories(data || []);
     } catch (error) {
@@ -42,9 +52,7 @@ const AdminSettings = () => {
         .from('site_settings')
         .select('*')
         .single();
-
       if (error && error.code !== 'PGRST116') throw error;
-
       if (data) {
         setSiteSettings(data);
       }
@@ -55,19 +63,15 @@ const AdminSettings = () => {
 
   const handleAddCategory = async () => {
     if (!newCategory.trim()) return;
-
     setLoading(true);
     try {
       const { error } = await supabase
         .from('categories')
         .insert([{ name: newCategory }]);
-
       if (error) throw error;
-
       // Update local state
       setCategories([...categories, { name: newCategory }]);
       setNewCategory('');
-
       // Log activity
       await supabase
         .from('activity_log')
@@ -92,12 +96,9 @@ const AdminSettings = () => {
           .from('categories')
           .delete()
           .eq('name', name);
-
         if (error) throw error;
-
         // Update local state
         setCategories(categories.filter(cat => cat.name !== name));
-
         // Log activity
         await supabase
           .from('activity_log')
@@ -120,9 +121,7 @@ const AdminSettings = () => {
       const { error } = await supabase
         .from('site_settings')
         .upsert([siteSettings]);
-
       if (error) throw error;
-
       // Log activity
       await supabase
         .from('activity_log')
@@ -132,7 +131,6 @@ const AdminSettings = () => {
           icon: 'fa-cog',
           color: 'text-blue-500'
         }]);
-
       alert('Settings saved successfully!');
     } catch (error) {
       console.error('Error saving settings:', error.message);
@@ -149,6 +147,11 @@ const AdminSettings = () => {
     });
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/admin/login';
+  };
+
   return (
     <div className="admin-dashboard">
       <div className="admin-sidebar">
@@ -160,49 +163,53 @@ const AdminSettings = () => {
             <span className="text-blue-600">Broker</span><span className="text-gray-800">Connect</span>
           </h1>
         </div>
-
         <nav className="mt-8">
           <ul>
             <li>
               <a href="/admin/dashboard">
-                <i className="fas fa-tachometer-alt mr-3"></i> Dashboard
+                <FaTachometerAlt className="mr-3" /> Dashboard
               </a>
             </li>
             <li>
               <a href="/admin/listings">
-                <i className="fas fa-home mr-3"></i> Listings
+                <FaHome className="mr-3" /> Listings
               </a>
             </li>
             <li>
               <a href="/admin/users">
-                <i className="fas fa-users mr-3"></i> Users
+                <FaUsers className="mr-3" /> Users
               </a>
             </li>
             <li>
               <a href="/admin/inquiries">
-                <i className="fas fa-envelope mr-3"></i> Inquiries
+                <FaEnvelope className="mr-3" /> Inquiries
               </a>
             </li>
             <li className="active">
               <a href="/admin/settings">
-                <i className="fas fa-cog mr-3"></i> Settings
+                <FaCog className="mr-3" /> Settings
               </a>
+            </li>
+            <li className="mt-auto">
+              <button 
+                onClick={handleLogout}
+                className="flex items-center w-full p-3 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+              >
+                <FaSignOutAlt className="mr-3" /> Logout
+              </button>
             </li>
           </ul>
         </nav>
       </div>
-
       <div className="admin-content">
         <div className="admin-header">
           <h1 className="text-2xl font-bold text-gray-900">Site Settings</h1>
         </div>
-
         <div className="admin-settings-container">
           <div className="admin-card">
             <div className="card-header">
               <h2 className="text-xl font-bold text-gray-900">Categories</h2>
             </div>
-
             <div className="categories-list">
               {categories.length > 0 ? (
                 <ul>
@@ -213,7 +220,7 @@ const AdminSettings = () => {
                         onClick={() => handleDeleteCategory(category.name)}
                         className="text-red-500 hover:text-red-700"
                       >
-                        <i className="fas fa-trash"></i>
+                        <FaTrash />
                       </button>
                     </li>
                   ))}
@@ -222,7 +229,6 @@ const AdminSettings = () => {
                 <p className="text-gray-500 text-center py-4">No categories found</p>
               )}
             </div>
-
             <div className="add-category">
               <input
                 type="text"
@@ -240,12 +246,10 @@ const AdminSettings = () => {
               </button>
             </div>
           </div>
-
           <div className="admin-card">
             <div className="card-header">
               <h2 className="text-xl font-bold text-gray-900">General Settings</h2>
             </div>
-
             <div className="settings-form">
               <div className="form-group">
                 <label>Site Name</label>
@@ -256,7 +260,6 @@ const AdminSettings = () => {
                   className="p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-
               <div className="form-group">
                 <label>Contact Email</label>
                 <input
@@ -266,7 +269,6 @@ const AdminSettings = () => {
                   className="p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-
               <div className="form-group">
                 <label>Contact Phone</label>
                 <input
@@ -276,7 +278,6 @@ const AdminSettings = () => {
                   className="p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-
               <div className="form-group">
                 <label>Address</label>
                 <input
@@ -286,7 +287,6 @@ const AdminSettings = () => {
                   className="p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-
               <div className="form-group">
                 <label>About Us</label>
                 <textarea
@@ -296,7 +296,6 @@ const AdminSettings = () => {
                   className="p-2 border border-gray-300 rounded-lg"
                 ></textarea>
               </div>
-
               <div className="form-group">
                 <label>Privacy Policy</label>
                 <textarea
@@ -306,7 +305,6 @@ const AdminSettings = () => {
                   className="p-2 border border-gray-300 rounded-lg"
                 ></textarea>
               </div>
-
               <div className="form-group">
                 <label>Terms of Service</label>
                 <textarea
@@ -316,7 +314,6 @@ const AdminSettings = () => {
                   className="p-2 border border-gray-300 rounded-lg"
                 ></textarea>
               </div>
-
               <div className="form-actions">
                 <button
                   onClick={handleSaveSettings}

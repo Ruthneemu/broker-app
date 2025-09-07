@@ -1,7 +1,19 @@
 // AdminInquiries.js
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
-import './Admin.css';
+import './admin.css';
+import { 
+  FaHome, 
+  FaUsers, 
+  FaEnvelope, 
+  FaCog, 
+  FaTachometerAlt,
+  FaFolder,
+  FaEye,
+  FaReply,
+  FaTimes,
+  FaSignOutAlt
+} from 'react-icons/fa';
 
 const AdminInquiries = () => {
   const [inquiries, setInquiries] = useState([]);
@@ -11,15 +23,15 @@ const AdminInquiries = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedInquiry, setSelectedInquiry] = useState(null);
   const [responseText, setResponseText] = useState('');
-
+  
   useEffect(() => {
     fetchInquiries();
   }, []);
-
+  
   useEffect(() => {
     filterInquiries();
   }, [inquiries, searchTerm, statusFilter]);
-
+  
   const fetchInquiries = async () => {
     setLoading(true);
     try {
@@ -27,7 +39,6 @@ const AdminInquiries = () => {
         .from('inquiries')
         .select('*')
         .order('created_at', { ascending: false });
-
       if (error) throw error;
       setInquiries(data || []);
     } catch (error) {
@@ -36,10 +47,9 @@ const AdminInquiries = () => {
       setLoading(false);
     }
   };
-
+  
   const filterInquiries = () => {
     let result = inquiries;
-
     if (searchTerm) {
       result = result.filter(inquiry => 
         inquiry.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -47,28 +57,23 @@ const AdminInquiries = () => {
         inquiry.message.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-
     if (statusFilter !== 'all') {
       result = result.filter(inquiry => inquiry.status === statusFilter);
     }
-
     setFilteredInquiries(result);
   };
-
+  
   const handleStatusChange = async (id, newStatus) => {
     try {
       const { error } = await supabase
         .from('inquiries')
         .update({ status: newStatus })
         .eq('id', id);
-
       if (error) throw error;
-
       // Update local state
       setInquiries(inquiries.map(inquiry => 
         inquiry.id === id ? { ...inquiry, status: newStatus } : inquiry
       ));
-
       // Log activity
       await supabase
         .from('activity_log')
@@ -83,14 +88,38 @@ const AdminInquiries = () => {
       alert('Failed to update status');
     }
   };
-
+  
+  const handleArchiveInquiry = async (id) => {
+    try {
+      const { error } = await supabase
+        .from('inquiries')
+        .update({ status: 'archived' })
+        .eq('id', id);
+      if (error) throw error;
+      // Update local state
+      setInquiries(inquiries.map(inquiry => 
+        inquiry.id === id ? { ...inquiry, status: 'archived' } : inquiry
+      ));
+      // Log activity
+      await supabase
+        .from('activity_log')
+        .insert([{
+          action: 'Archived Inquiry',
+          description: `Admin archived inquiry #${id}`,
+          icon: 'fa-folder',
+          color: 'text-yellow-500'
+        }]);
+    } catch (error) {
+      console.error('Error archiving inquiry:', error.message);
+      alert('Failed to archive inquiry');
+    }
+  };
+  
   const handleSendResponse = async () => {
     if (!selectedInquiry || !responseText.trim()) return;
-
     try {
       // In a real app, you would send an email here
       // For demo purposes, we'll just update the inquiry status
-
       const { error } = await supabase
         .from('inquiries')
         .update({ 
@@ -99,16 +128,13 @@ const AdminInquiries = () => {
           responded_at: new Date().toISOString()
         })
         .eq('id', selectedInquiry.id);
-
       if (error) throw error;
-
       // Update local state
       setInquiries(inquiries.map(inquiry => 
         inquiry.id === selectedInquiry.id 
           ? { ...inquiry, status: 'responded', response: responseText } 
           : inquiry
       ));
-
       // Log activity
       await supabase
         .from('activity_log')
@@ -118,7 +144,6 @@ const AdminInquiries = () => {
           icon: 'fa-reply',
           color: 'text-green-500'
         }]);
-
       // Reset form
       setSelectedInquiry(null);
       setResponseText('');
@@ -128,7 +153,7 @@ const AdminInquiries = () => {
       alert('Failed to send response');
     }
   };
-
+  
   const getStatusBadge = (status) => {
     switch (status) {
       case 'pending':
@@ -142,6 +167,11 @@ const AdminInquiries = () => {
     }
   };
 
+  const handleLogout = async () => {
+    // Add your logout logic here
+    window.location.href = '/admin/login';
+  };
+  
   return (
     <div className="admin-dashboard">
       <div className="admin-sidebar">
@@ -153,43 +183,77 @@ const AdminInquiries = () => {
             <span className="text-blue-600">Broker</span><span className="text-gray-800">Connect</span>
           </h1>
         </div>
-
         <nav className="mt-8">
           <ul>
             <li>
               <a href="/admin/dashboard">
-                <i className="fas fa-tachometer-alt mr-3"></i> Dashboard
+                <FaTachometerAlt className="mr-3" /> Dashboard
               </a>
             </li>
             <li>
               <a href="/admin/listings">
-                <i className="fas fa-home mr-3"></i> Listings
+                <FaHome className="mr-3" /> Listings
               </a>
             </li>
             <li>
               <a href="/admin/users">
-                <i className="fas fa-users mr-3"></i> Users
+                <FaUsers className="mr-3" /> Users
               </a>
             </li>
             <li className="active">
               <a href="/admin/inquiries">
-                <i className="fas fa-envelope mr-3"></i> Inquiries
+                <FaEnvelope className="mr-3" /> Inquiries
               </a>
             </li>
             <li>
               <a href="/admin/settings">
-                <i className="fas fa-cog mr-3"></i> Settings
+                <FaCog className="mr-3" /> Settings
               </a>
+            </li>
+            <li className="mt-auto">
+              <button 
+                onClick={handleLogout}
+                className="flex items-center w-full p-3 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+              >
+                <FaSignOutAlt className="mr-3" /> Logout
+              </button>
             </li>
           </ul>
         </nav>
       </div>
-
       <div className="admin-content">
         <div className="admin-header">
           <h1 className="text-2xl font-bold text-gray-900">Inquiry Management</h1>
         </div>
-
+        
+        {/* Filter Tabs */}
+        <div className="filter-tabs">
+          <button 
+            className={`tab-button ${statusFilter === 'all' ? 'active' : ''}`}
+            onClick={() => setStatusFilter('all')}
+          >
+            All Inquiries
+          </button>
+          <button 
+            className={`tab-button ${statusFilter === 'pending' ? 'active' : ''}`}
+            onClick={() => setStatusFilter('pending')}
+          >
+            Pending
+          </button>
+          <button 
+            className={`tab-button ${statusFilter === 'responded' ? 'active' : ''}`}
+            onClick={() => setStatusFilter('responded')}
+          >
+            Responded
+          </button>
+          <button 
+            className={`tab-button ${statusFilter === 'archived' ? 'active' : ''}`}
+            onClick={() => setStatusFilter('archived')}
+          >
+            Archived
+          </button>
+        </div>
+        
         <div className="admin-filters">
           <div className="filter-group">
             <label>Search</label>
@@ -201,22 +265,8 @@ const AdminInquiries = () => {
               className="p-2 border border-gray-300 rounded-lg"
             />
           </div>
-
-          <div className="filter-group">
-            <label>Status</label>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="p-2 border border-gray-300 rounded-lg"
-            >
-              <option value="all">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="responded">Responded</option>
-              <option value="archived">Archived</option>
-            </select>
-          </div>
         </div>
-
+        
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -232,8 +282,8 @@ const AdminInquiries = () => {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Listing</th>
-                    <th>Status</th>
                     <th>Date</th>
+                    <th>Status</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -243,29 +293,35 @@ const AdminInquiries = () => {
                       <tr key={inquiry.id}>
                         <td>#{inquiry.id}</td>
                         <td>{inquiry.name}</td>
-                        <td>{inquiry.email}</td>
-                        <td>#{inquiry.listing_id}</td>
-                        <td>{getStatusBadge(inquiry.status)}</td>
+                        <td>
+                          <a href={`mailto:${inquiry.email}`} className="text-blue-600 hover:underline">
+                            {inquiry.email}
+                          </a>
+                        </td>
+                        <td>
+                          <a href={`/admin/listings/${inquiry.listing_id}`} className="text-blue-600 hover:underline">
+                            #{inquiry.listing_id}
+                          </a>
+                        </td>
                         <td>{new Date(inquiry.created_at).toLocaleDateString()}</td>
+                        <td>{getStatusBadge(inquiry.status)}</td>
                         <td>
                           <div className="action-buttons">
                             <button 
                               onClick={() => setSelectedInquiry(inquiry)}
                               className="action-btn view"
-                              title="View"
+                              title="View Details"
                             >
-                              <i className="fas fa-eye"></i>
+                              <FaEye />
                             </button>
-
-                            <select
-                              value={inquiry.status}
-                              onChange={(e) => handleStatusChange(inquiry.id, e.target.value)}
-                              className="status-select"
+                            <button 
+                              onClick={() => handleArchiveInquiry(inquiry.id)}
+                              className="action-btn archive"
+                              title="Archive"
+                              disabled={inquiry.status === 'archived'}
                             >
-                              <option value="pending">Pending</option>
-                              <option value="responded">Responded</option>
-                              <option value="archived">Archived</option>
-                            </select>
+                              <FaFolder />
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -280,7 +336,7 @@ const AdminInquiries = () => {
                 </tbody>
               </table>
             </div>
-
+            
             {selectedInquiry && (
               <div className="inquiry-detail">
                 <div className="inquiry-header">
@@ -289,10 +345,9 @@ const AdminInquiries = () => {
                     onClick={() => setSelectedInquiry(null)}
                     className="text-gray-500 hover:text-gray-700"
                   >
-                    <i className="fas fa-times"></i>
+                    <FaTimes />
                   </button>
                 </div>
-
                 <div className="inquiry-info">
                   <div className="info-row">
                     <span className="font-medium">Name:</span>
@@ -319,12 +374,10 @@ const AdminInquiries = () => {
                     {getStatusBadge(selectedInquiry.status)}
                   </div>
                 </div>
-
                 <div className="inquiry-message">
                   <h4 className="font-medium mb-2">Message:</h4>
                   <p>{selectedInquiry.message}</p>
                 </div>
-
                 {selectedInquiry.response && (
                   <div className="inquiry-response">
                     <h4 className="font-medium mb-2">Previous Response:</h4>
@@ -334,7 +387,6 @@ const AdminInquiries = () => {
                     </div>
                   </div>
                 )}
-
                 <div className="inquiry-response-form">
                   <h4 className="font-medium mb-2">Send Response:</h4>
                   <textarea
