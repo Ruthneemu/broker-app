@@ -1,9 +1,15 @@
-// contexts/AuthContext.js
+// AuthContext.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { createClient } from '@supabase/supabase-js';
+
+// Create Supabase client directly in this file
+const supabaseUrl = 'https://ouscjkmgdsnzakairivo.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91c2Nqa21nZHNuemFrYWlyaXZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzY0MzYsImV4cCI6MjA3MTUxMjQzNn0.ii49ymR7Bi7WZTYOkYnE1-kJIlZ7DV5xR_tM3kbX-MU';
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const AuthContext = createContext();
 
+// Custom hook to use the auth context
 export function useAuth() {
   return useContext(AuthContext);
 }
@@ -17,23 +23,19 @@ export function AuthProvider({ children }) {
     const checkUser = async () => {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
-
       if (user) {
         setUser(user);
-
         // Check if user is admin
         const { data: profile } = await supabase
           .from('profiles')
           .select('role')
           .eq('id', user.id)
           .single();
-
         setIsAdmin(profile?.role === 'admin');
       } else {
         setUser(null);
         setIsAdmin(false);
       }
-
       setLoading(false);
     };
 
@@ -43,14 +45,12 @@ export function AuthProvider({ children }) {
       async (event, session) => {
         if (event === 'SIGNED_IN') {
           setUser(session.user);
-
           // Check if user is admin
           const { data: profile } = await supabase
             .from('profiles')
             .select('role')
             .eq('id', session.user.id)
             .single();
-
           setIsAdmin(profile?.role === 'admin');
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
