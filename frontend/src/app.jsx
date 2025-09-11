@@ -3,22 +3,18 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import { GoogleMap, useLoadScript, MarkerF } from '@react-google-maps/api';
 import './index.css';
 import { createClient } from '@supabase/supabase-js';
-
 const supabaseUrl = 'https://ouscjkmgdsnzakairivo.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91c2Nqa21nZHNuemFrYWlyaXZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5MzY0MzYsImV4cCI6MjA3MTUxMjQzNn0.ii49ymR7Bi7WZTYOkYnE1-kJIlZ7DV5xR_tM3kbX-MU';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
 // Header Component
 const Header = ({ currentView, setCurrentView, isLoggedIn, session, showProfileModal, setShowProfileModal, profileForm, setProfileForm, handleProfileChange, handleLogout, setShowLoginModal, setShowRegistrationModal }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
-
   const handleCategorySelect = (category) => {
     setCurrentView(category);
     navigate(`/${category}`);
     setShowDropdown(false);
   };
-
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-6 py-4">
@@ -31,7 +27,6 @@ const Header = ({ currentView, setCurrentView, isLoggedIn, session, showProfileM
               <span className="text-blue-600">Broker</span><span className="text-gray-800">Connect</span>
             </h1>
           </div>
-
           <nav className="hidden md:flex items-center space-x-1">
             <button
               type="button"
@@ -47,7 +42,6 @@ const Header = ({ currentView, setCurrentView, isLoggedIn, session, showProfileM
             >
               Home
             </button>
-
             <div className="relative">
               <button
                 type="button"
@@ -57,7 +51,6 @@ const Header = ({ currentView, setCurrentView, isLoggedIn, session, showProfileM
                 Categories
                 <i className="fas fa-chevron-down ml-2 text-xs"></i>
               </button>
-
               {showDropdown && (
                 <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                   <button
@@ -84,7 +77,6 @@ const Header = ({ currentView, setCurrentView, isLoggedIn, session, showProfileM
                 </div>
               )}
             </div>
-
             {isLoggedIn && (
               <>
                 <button
@@ -98,7 +90,6 @@ const Header = ({ currentView, setCurrentView, isLoggedIn, session, showProfileM
                 >
                   My Listings
                 </button>
-
                 <button
                   type="button"
                   onClick={() => setCurrentView('favorites')}
@@ -112,7 +103,6 @@ const Header = ({ currentView, setCurrentView, isLoggedIn, session, showProfileM
                 </button>
               </>
             )}
-
             {isLoggedIn ? (
               <div className="relative group">
                 <button className="flex items-center space-x-2">
@@ -121,7 +111,6 @@ const Header = ({ currentView, setCurrentView, isLoggedIn, session, showProfileM
                   </div>
                   <span className="text-gray-700">{session.user.email.split('@')[0]}</span>
                 </button>
-
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block z-50">
                   <button
                     type="button"
@@ -161,7 +150,6 @@ const Header = ({ currentView, setCurrentView, isLoggedIn, session, showProfileM
               </>
             )}
           </nav>
-
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button className="text-gray-500 hover:text-gray-700">
@@ -173,11 +161,9 @@ const Header = ({ currentView, setCurrentView, isLoggedIn, session, showProfileM
     </header>
   );
 };
-
 // Home Page Component
 const HomePage = ({ setCurrentView, isLoggedIn, setShowAddForm }) => {
   const navigate = useNavigate();
-
   return (
     <div className="bg-gray-50 min-h-screen">
       <main className="max-w-7xl mx-auto px-6 py-16">
@@ -220,7 +206,6 @@ const HomePage = ({ setCurrentView, isLoggedIn, setShowAddForm }) => {
             </button>
           </div>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-blue-200">
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6">
@@ -239,7 +224,6 @@ const HomePage = ({ setCurrentView, isLoggedIn, setShowAddForm }) => {
               View Apartments
             </button>
           </div>
-
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-green-200">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
               <i className="fas fa-car text-green-600 text-2xl"></i>
@@ -257,7 +241,6 @@ const HomePage = ({ setCurrentView, isLoggedIn, setShowAddForm }) => {
               View Cars
             </button>
           </div>
-
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-yellow-200">
             <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-6">
               <i className="fas fa-tree text-yellow-600 text-2xl"></i>
@@ -276,7 +259,6 @@ const HomePage = ({ setCurrentView, isLoggedIn, setShowAddForm }) => {
             </button>
           </div>
         </div>
-
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -307,7 +289,6 @@ const HomePage = ({ setCurrentView, isLoggedIn, setShowAddForm }) => {
     </div>
   );
 };
-
 // Category Listings Page Component
 const CategoryListingsPage = ({ 
   category, 
@@ -325,10 +306,10 @@ const CategoryListingsPage = ({
   setShowReviewModal, 
   handleShareListing, 
   handleOpenNotesModal, 
-  currentView 
+  currentView,
+  userId
 }) => {
   const navigate = useNavigate();
-
   const getCategoryIcon = () => {
     switch(category) {
       case 'apartments': return 'fas fa-building';
@@ -337,7 +318,6 @@ const CategoryListingsPage = ({
       default: return 'fas fa-home';
     }
   };
-
   return (
     <div className="bg-gray-50 min-h-screen">
       <main className="max-w-7xl mx-auto px-6 py-8">
@@ -353,7 +333,6 @@ const CategoryListingsPage = ({
             </button>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{title}</h1>
           </div>
-
           <div className="flex items-center space-x-4">
             <div className="relative flex-grow max-w-md">
               <input
@@ -372,7 +351,6 @@ const CategoryListingsPage = ({
             </button>
           </div>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {loading ? (
             <div className="text-center text-gray-500 text-xl font-semibold col-span-full py-12">
@@ -417,7 +395,6 @@ const CategoryListingsPage = ({
                     </div>
                   </div>
                 )}
-
                 <div className="p-5">
                   <div className="flex justify-between items-start mb-2">
                     <div>
@@ -428,13 +405,11 @@ const CategoryListingsPage = ({
                       ${new Intl.NumberFormat().format(listing.price)}
                     </div>
                   </div>
-
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">{listing.description}</p>
-
                   <div className="flex flex-wrap gap-2 mt-4">
                     {isLoggedIn && (
                       <>
-                        {listing.owner_id === listing.owner_id ? (
+                        {listing.owner_id === userId ? (
                           <>
                             <button className="flex-1 text-center px-3 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors text-sm">
                               <i className="fas fa-edit mr-1"></i> Edit
@@ -469,7 +444,6 @@ const CategoryListingsPage = ({
                         </button>
                       </>
                     )}
-
                     <button 
                       type="button"
                       onClick={(e) => {
@@ -518,7 +492,6 @@ const CategoryListingsPage = ({
     </div>
   );
 };
-
 // Listing Detail Page Component
 const ListingDetailPage = ({ 
   selectedListing, 
@@ -535,14 +508,13 @@ const ListingDetailPage = ({
   setCurrentListing, 
   setUploadedImage, 
   setShowEditModal, 
-  handleOpenChat 
+  handleOpenChat,
+  userId
 }) => {
   const navigate = useNavigate();
-
   if (!selectedListing) {
     return <div>Loading...</div>;
   }
-
   const getCategoryColor = () => {
     switch(selectedListing.type) {
       case 'house': return 'from-blue-600 to-indigo-700';
@@ -551,7 +523,6 @@ const ListingDetailPage = ({
       default: return 'from-gray-600 to-gray-700';
     }
   };
-
   const getCategoryName = () => {
     switch(selectedListing.type) {
       case 'house': return 'Apartment';
@@ -560,7 +531,6 @@ const ListingDetailPage = ({
       default: return 'Property';
     }
   };
-
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className={`bg-gradient-to-r ${getCategoryColor()} py-6`}>
@@ -576,7 +546,6 @@ const ListingDetailPage = ({
           <h1 className="text-3xl font-bold text-white">{selectedListing.address}</h1>
         </div>
       </div>
-
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="relative w-full h-80 md:h-[500px]">
@@ -604,7 +573,6 @@ const ListingDetailPage = ({
               </>
             )}
           </div>
-
           <div className="p-6 md:p-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
               <div>
@@ -615,7 +583,6 @@ const ListingDetailPage = ({
                 <div className="text-3xl font-bold text-blue-600">${new Intl.NumberFormat().format(selectedListing.price)}</div>
               </div>
             </div>
-
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-gray-700 mb-8">
               {selectedListing.type === 'house' && selectedListing.details && (
                 <>
@@ -662,12 +629,10 @@ const ListingDetailPage = ({
                 </>
               )}
             </div>
-
             <div className="mb-8">
               <h3 className="text-xl font-bold text-gray-800 mb-3">Description</h3>
               <p className="text-gray-600 leading-relaxed">{selectedListing.description}</p>
             </div>
-
             <div className="mb-8">
               <h3 className="text-xl font-bold text-gray-800 mb-3">Reviews</h3>
               <div className="flex items-center space-x-2">
@@ -675,12 +640,10 @@ const ListingDetailPage = ({
                 <span className="text-gray-600">({selectedListing.reviews.length} reviews)</span>
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="md:col-span-2">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Contact Broker</h3>
                 <p className="text-gray-600 mb-6">Interested in this {getCategoryName().toLowerCase()}? Reach out to the broker for more details or to schedule a viewing.</p>
-
                 <div className="bg-blue-50 p-6 rounded-xl border border-blue-200 mb-6">
                   <div className="flex items-center mb-4">
                     <i className="fas fa-envelope text-blue-600 mr-3"></i>
@@ -688,7 +651,6 @@ const ListingDetailPage = ({
                   </div>
                   <p className="text-gray-600 text-sm">Response time: Usually within 24 hours</p>
                 </div>
-
                 <form className="space-y-4">
                   <div>
                     <input type="text" placeholder="Your Name" required className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -704,7 +666,6 @@ const ListingDetailPage = ({
                   </button>
                 </form>
               </div>
-
               <div>
                 <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
                   <h3 className="text-xl font-bold text-gray-800 mb-4">Actions</h3>
@@ -720,7 +681,6 @@ const ListingDetailPage = ({
                       <i className="fas fa-star mr-2 text-yellow-500"></i>
                       View Reviews
                     </button>
-
                     {isLoggedIn && (
                       <button
                         type="button"
@@ -738,8 +698,7 @@ const ListingDetailPage = ({
                         {favorites.includes(selectedListing.id) ? 'Remove from Favorites' : 'Add to Favorites'}
                       </button>
                     )}
-
-                    {isLoggedIn && selectedListing.owner_id === selectedListing.owner_id && (
+                    {isLoggedIn && selectedListing.owner_id === userId && (
                       <button
                         type="button"
                         onClick={(e) => {
@@ -754,8 +713,7 @@ const ListingDetailPage = ({
                         Edit Listing
                       </button>
                     )}
-
-                    {isLoggedIn && selectedListing.owner_id !== selectedListing.owner_id && (
+                    {isLoggedIn && selectedListing.owner_id !== userId && (
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); handleOpenChat(selectedListing); }}
@@ -775,7 +733,6 @@ const ListingDetailPage = ({
     </div>
   );
 };
-
 // Main App Component
 const App = () => {
   const [session, setSession] = useState(null);
@@ -802,32 +759,28 @@ const App = () => {
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const chatMessagesEndRef = useRef(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const [sortOption, setSortOption] = useState('price_asc');
-  const [carFilters, setCarFilters] = useState({ make: '', mileageMax: '' });
-  const [landFilters, setLandFilters] = useState({ acresMax: '', zoning: '' });
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [selectedListingId, setSelectedListingId] = useState(null);
   const [profileForm, setProfileForm] = useState({ name: '' });
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState({
+  const [filters] = useState({
     priceMin: '',
     priceMax: '',
     bedroomsMin: '',
     bathroomsMin: '',
     sqftMin: '',
   });
-
   const [listingType, setListingType] = useState('house'); 
   const [formDetails, setFormDetails] = useState({});
-  const [selectedType, setSelectedType] = useState(null);
-
+  const [selectedType] = useState(null);
+  const [carFilters] = useState({ make: '', mileageMax: '' });
+  const [landFilters] = useState({ acresMax: '', zoning: '' });
+  const [searchTerm] = useState('');
   // Google Maps
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
   });
   const mapCenter = useMemo(() => ({ lat: 34.0522, lng: -118.2437 }), []);
-
   const fetchListings = useCallback(async () => {
     setLoading(true);
     try {
@@ -884,7 +837,6 @@ const App = () => {
       setLoading(false);
     }
   }, [selectedType, searchTerm, filters, carFilters, landFilters, session]);
-
  useEffect(() => {
   const { data: authListener } = supabase.auth.onAuthStateChange(
     async (event, session) => {
@@ -892,16 +844,13 @@ const App = () => {
       fetchListings();
     }
   );
-
   return () => {
     authListener.subscription.unsubscribe();
   };
-}, []); 
-
+}, [fetchListings]); 
  useEffect(() => {
   fetchListings();
-}, [selectedType, searchTerm, filters, carFilters, landFilters, session]);
-
+}, [fetchListings]);
   const trackListingView = async (listingId) => {
     if (!session?.user?.id) return;
     try {
@@ -913,21 +862,18 @@ const App = () => {
       console.error('Error tracking listing view:', error.message);
     }
   };
-
   const handleProfileChange = (e) => {
     setProfileForm({
       ...profileForm,
       [e.target.name]: e.target.value
     });
   };
-
   const handleSelectListing = (listingId) => {
     setSelectedListingId(listingId);
     if (session?.user?.id) {
       trackListingView(listingId);
     }
   };
-
   useEffect(() => {
     if (listingForChat && session) {
       const fetchMessages = async () => {
@@ -963,14 +909,11 @@ const App = () => {
       };
     }
   }, [listingForChat, session]);
-
   const userId = session?.user?.id;
   const isLoggedIn = !!session;
-
   useEffect(() => {
     scrollToBottom();
   }, [chatMessages]);
-
   const generateListingImage = async (listingDetails) => {
     setIsGeneratingImage(true);
     return new Promise((resolve) => {
@@ -981,14 +924,13 @@ const App = () => {
       }, 2000);
     });
   };
-
   const uploadImage = async (file) => {
     if (!file) return null;
     const fileExt = file.name.split('.').pop();
     const fileName = `${Math.random()}.${fileExt}`;
     const filePath = `listings/${fileName}`;
     try {
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('listing_photos')
         .upload(filePath, file);
       if (error) throw error;
@@ -1001,7 +943,6 @@ const App = () => {
       return null;
     }
   };
-
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -1010,13 +951,11 @@ const App = () => {
       setUploadedImage(null);
     }
   };
-
   const getAverageRating = (reviews) => {
     if (!reviews || reviews.length === 0) return 0;
     const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
     return totalRating / reviews.length;
   };
-
   const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
@@ -1032,7 +971,6 @@ const App = () => {
     }
     return <div className="flex space-x-0.5">{stars}</div>;
   };
-
   const handleAddListing = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -1079,7 +1017,6 @@ const App = () => {
       setLoading(false);
     }
   };
-
   const handleDeleteListing = async (id) => {
     setLoading(true);
     try {
@@ -1099,7 +1036,6 @@ const App = () => {
       setLoading(false);
     }
   };
-
   const handleUpdateListing = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -1139,7 +1075,6 @@ const App = () => {
       setLoading(false);
     }
   };
-
   const handleAddReview = async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -1164,7 +1099,6 @@ const App = () => {
       console.error('Error adding review:', error.message);
     }
   };
-
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -1181,7 +1115,6 @@ const App = () => {
       setLoading(false);
     }
   };
-
   const handleToggleFavorite = async (listingId) => {
     if (!userId) {
       alert("Please log in to add favorites.");
@@ -1217,7 +1150,6 @@ const App = () => {
       setLoading(false);
     }
   };
-
   const handleOpenChat = (listing) => {
     if (!isLoggedIn) {
       alert("Please log in to chat with a broker.");
@@ -1226,7 +1158,6 @@ const App = () => {
     setListingForChat(listing);
     setShowChatModal(true);
   };
-
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newChatMessage.trim() || !userId || !listingForChat) return;
@@ -1246,13 +1177,11 @@ const App = () => {
       console.error('Error sending message:', error.message);
     }
   };
-
   const scrollToBottom = () => {
     if (chatMessagesEndRef.current) {
       chatMessagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
   const handleShareListing = async (listing) => {
     const listingUrl = `${window.location.origin}?listingId=${listing.id}`;
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1278,7 +1207,6 @@ const App = () => {
       document.body.removeChild(textarea);
     }
   };
-
   const handleNextImage = (listingId, imageUrls) => {
     setCurrentImageIndex(prev => {
       const currentIndex = prev[listingId] || 0;
@@ -1286,7 +1214,6 @@ const App = () => {
       return { ...prev, [listingId]: nextIndex };
     });
   };
-
   const handlePrevImage = (listingId, imageUrls) => {
     setCurrentImageIndex(prev => {
       const currentIndex = prev[listingId] || 0;
@@ -1294,7 +1221,6 @@ const App = () => {
       return { ...prev, [listingId]: prevIndex };
     });
   };
-
   const handleRegistration = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -1302,7 +1228,6 @@ const App = () => {
     const email = form.email.value;
     const password = form.password.value;
     const name = form.name.value;
-
     try {
       const { data: authData, error } = await supabase.auth.signUp({
         email,
@@ -1311,9 +1236,7 @@ const App = () => {
           data: { name }
         }
       });
-
       if (error) throw error;
-
       if (authData.user) {
         const { error: profileError } = await supabase
           .from('profiles')
@@ -1325,10 +1248,8 @@ const App = () => {
               role: 'user'
             }
           ]);
-
         if (profileError) throw profileError;
       }
-
       alert('Registration successful! Please check your email to confirm your account.');
       setShowRegistrationModal(false);
       setShowLoginModal(true);
@@ -1338,7 +1259,6 @@ const App = () => {
       setLoading(false);
     }
   };
-
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -1354,7 +1274,6 @@ const App = () => {
       setShowLoginModal(false);
     }
   };
-
   const handleForgotPassword = async () => {
     const email = prompt('Please enter your email address to reset your password:');
     if (email) {
@@ -1370,12 +1289,10 @@ const App = () => {
       }
     }
   };
-
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-
       setSession(null);
       setFavorites([]);
     } catch (error) {
@@ -1383,19 +1300,18 @@ const App = () => {
       alert('Error signing out. Please try again.');
     }
   };
-
   const handleOpenNotesModal = async (listing) => {
     setCurrentListing(listing);
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      const result = await supabase
         .from('private_notes')
         .select('note_content')
         .eq('user_id', userId)
         .eq('listing_id', listing.id)
         .single();
-      if (error && error.code !== 'PGRST116') throw error;
-      setCurrentNote(data?.note_content || '');
+      if (result.error && result.error.code !== 'PGRST116') throw result.error;
+      setCurrentNote(result.data?.note_content || '');
       setShowNotesModal(true);
     } catch (error) {
       console.error('Error fetching private note:', error.message);
@@ -1404,7 +1320,6 @@ const App = () => {
       setLoading(false);
     }
   };
-
   const handleSaveNote = async () => {
     if (!currentListing || !userId) return;
     setLoading(true);
@@ -1442,13 +1357,10 @@ const App = () => {
       setLoading(false);
     }
   };
-
   const selectedListing = selectedListingId ? listings.find(l => l.id === selectedListingId) : null;
-
   const renderMapAndListings = () => {
     if (loadError) return <div className="text-red-500 text-center font-semibold p-8">Error loading maps</div>;
     if (!isLoaded) return <div className="text-gray-500 text-center font-semibold p-8">Loading Map...</div>;
-
     return (
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8">
         <div className="h-[60vh] lg:h-[80vh] sticky top-28 rounded-2xl overflow-hidden shadow-lg border border-gray-200">
@@ -1470,7 +1382,6 @@ const App = () => {
             ))}
           </GoogleMap>
         </div>
-
         <div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
             {loading ? (
@@ -1507,7 +1418,6 @@ const App = () => {
                           </button>
                         )}
                       </div>
-
                       {listing.image_urls.length > 1 && (
                         <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-1">
                           {listing.image_urls.map((_, index) => (
@@ -1529,7 +1439,6 @@ const App = () => {
                       </div>
                     </div>
                   )}
-
                   <div className="p-5">
                     <div className="flex justify-between items-start mb-2">
                       <div>
@@ -1540,9 +1449,7 @@ const App = () => {
                         ${new Intl.NumberFormat().format(listing.price)}
                       </div>
                     </div>
-
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">{listing.description}</p>
-
                     <div className="flex flex-wrap gap-2 mt-4">
                       {isLoggedIn && currentView === 'public' && (
                         <>
@@ -1581,7 +1488,6 @@ const App = () => {
                           </button>
                         </>
                       )}
-
                       <button 
                         type="button"
                         onClick={(e) => {
@@ -1630,32 +1536,10 @@ const App = () => {
       </div>
     );
   };
-
-  const sortListings = (listings) => {
-    const sorted = [...listings];
-    switch (sortOption) {
-      case 'price_asc':
-        return sorted.sort((a, b) => a.price - b.price);
-      case 'price_desc':
-        return sorted.sort((a, b) => b.price - a.price);
-      case 'date_desc':
-        return sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      case 'rating_desc':
-        return sorted.sort((a, b) => {
-          const avgRatingA = a.reviews.length > 0 ? a.reviews.reduce((sum, r) => sum + r.rating, 0) / a.reviews.length : 0;
-          const avgRatingB = b.reviews.length > 0 ? b.reviews.reduce((sum, r) => sum + r.rating, 0) / b.reviews.length : 0;
-          return avgRatingB - avgRatingA;
-        });
-      default:
-        return sorted;
-    }
-  };
-
   const renderDynamicForm = (isEdit = false) => {
     const currentListingDetails = isEdit && currentListing ? currentListing.details : formDetails.details;
     const currentType = isEdit && currentListing ? currentListing.type : listingType;
     let dynamicFields = null;
-
     switch (currentType) {
       case 'house':
         dynamicFields = (
@@ -1716,7 +1600,6 @@ const App = () => {
     }
     return dynamicFields;
   };
-
   return (
     <Router>
       <div className="bg-gray-50 min-h-screen">
@@ -1734,7 +1617,6 @@ const App = () => {
           setShowLoginModal={setShowLoginModal}
           setShowRegistrationModal={setShowRegistrationModal}
         />
-
         <Routes>
           <Route path="/" element={
             <HomePage 
@@ -1743,7 +1625,6 @@ const App = () => {
               setShowAddForm={setShowAddForm}
             />
           } />
-
           <Route path="/apartments" element={
             <CategoryListingsPage 
               category="apartments"
@@ -1762,9 +1643,9 @@ const App = () => {
               handleShareListing={handleShareListing}
               handleOpenNotesModal={handleOpenNotesModal}
               currentView={currentView}
+              userId={userId}
             />
           } />
-
           <Route path="/cars" element={
             <CategoryListingsPage 
               category="cars"
@@ -1783,9 +1664,9 @@ const App = () => {
               handleShareListing={handleShareListing}
               handleOpenNotesModal={handleOpenNotesModal}
               currentView={currentView}
+              userId={userId}
             />
           } />
-
           <Route path="/land" element={
             <CategoryListingsPage 
               category="land"
@@ -1804,9 +1685,9 @@ const App = () => {
               handleShareListing={handleShareListing}
               handleOpenNotesModal={handleOpenNotesModal}
               currentView={currentView}
+              userId={userId}
             />
           } />
-
           <Route path="/listing/:id" element={
             <ListingDetailPage 
               selectedListing={selectedListing}
@@ -1824,9 +1705,9 @@ const App = () => {
               setUploadedImage={setUploadedImage}
               setShowEditModal={setShowEditModal}
               handleOpenChat={handleOpenChat}
+              userId={userId}
             />
           } />
-
           <Route path="*" element={
             currentView === 'public' ? (
               <div className="max-w-7xl mx-auto px-6 py-8">
@@ -1849,6 +1730,7 @@ const App = () => {
                 setUploadedImage={setUploadedImage}
                 setShowEditModal={setShowEditModal}
                 handleOpenChat={handleOpenChat}
+                userId={userId}
               />
             ) : (
               <div className="text-center py-12">
@@ -1864,7 +1746,6 @@ const App = () => {
             )
           } />
         </Routes>
-
         {/* Add Listing Modal */}
         {showAddForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -1881,7 +1762,6 @@ const App = () => {
                   </button>
                 </div>
               </div>
-
               <div className="p-6">
                 <div className="mb-6">
                   <label className="block text-gray-700 font-medium mb-2">Listing Type</label>
@@ -1898,7 +1778,6 @@ const App = () => {
                     <option value="land">Land</option>
                   </select>
                 </div>
-
                 <form onSubmit={handleAddListing} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -1913,7 +1792,6 @@ const App = () => {
                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                       />
                     </div>
-
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">City</label>
                       <input 
@@ -1926,7 +1804,6 @@ const App = () => {
                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                       />
                     </div>
-
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">Price</label>
                       <input 
@@ -1940,7 +1817,6 @@ const App = () => {
                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                       />
                     </div>
-
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">Latitude</label>
                       <input 
@@ -1954,7 +1830,6 @@ const App = () => {
                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                       />
                     </div>
-
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">Longitude</label>
                       <input 
@@ -1969,7 +1844,6 @@ const App = () => {
                       />
                     </div>
                   </div>
-
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Description</label>
                     <textarea 
@@ -1982,9 +1856,7 @@ const App = () => {
                       rows="3"
                     ></textarea>
                   </div>
-
                   {renderDynamicForm()}
-
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Upload Image (optional)</label>
                     <input 
@@ -1994,7 +1866,6 @@ const App = () => {
                       className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                     />
                   </div>
-
                   <div className="flex justify-end space-x-4 pt-4">
                     <button 
                       type="button" 
@@ -2016,7 +1887,6 @@ const App = () => {
             </div>
           </div>
         )}
-
         {/* Edit Listing Modal */}
         {showEditModal && currentListing && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -2033,7 +1903,6 @@ const App = () => {
                   </button>
                 </div>
               </div>
-
               <div className="p-6">
                 <form onSubmit={handleUpdateListing} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2049,7 +1918,6 @@ const App = () => {
                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                       />
                     </div>
-
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">City</label>
                       <input 
@@ -2062,7 +1930,6 @@ const App = () => {
                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                       />
                     </div>
-
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">Price</label>
                       <input 
@@ -2076,7 +1943,6 @@ const App = () => {
                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                       />
                     </div>
-
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">Latitude</label>
                       <input 
@@ -2090,7 +1956,6 @@ const App = () => {
                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                       />
                     </div>
-
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">Longitude</label>
                       <input 
@@ -2105,7 +1970,6 @@ const App = () => {
                       />
                     </div>
                   </div>
-
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Description</label>
                     <textarea 
@@ -2118,9 +1982,7 @@ const App = () => {
                       rows="3"
                     ></textarea>
                   </div>
-
                   {renderDynamicForm(true)}
-
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Upload New Image (optional)</label>
                     <input 
@@ -2130,7 +1992,6 @@ const App = () => {
                       className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                     />
                   </div>
-
                   <div className="flex justify-end space-x-4 pt-4">
                     <button 
                       type="button" 
@@ -2152,7 +2013,6 @@ const App = () => {
             </div>
           </div>
         )}
-
         {/* Confirm Delete Modal */}
         {showConfirmDeleteModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -2186,7 +2046,6 @@ const App = () => {
             </div>
           </div>
         )}
-
         {/* Review Modal */}
         {showReviewModal && listingForReview && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -2203,7 +2062,6 @@ const App = () => {
                   </button>
                 </div>
               </div>
-
               <div className="p-6">
                 {listingForReview.reviews.length > 0 ? (
                   <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
@@ -2239,7 +2097,6 @@ const App = () => {
                     <p className="text-gray-600 mb-6">Be the first to share your experience with this property.</p>
                   </div>
                 )}
-
                 <div className="mt-6 flex justify-center">
                   <button
                     type="button"
@@ -2257,7 +2114,6 @@ const App = () => {
             </div>
           </div>
         )}
-
         {/* Add Review Modal */}
         {showAddReviewModal && listingForReview && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -2274,7 +2130,6 @@ const App = () => {
                   </button>
                 </div>
               </div>
-
               <div className="p-6">
                 <form onSubmit={handleAddReview} className="space-y-6">
                   <div>
@@ -2302,7 +2157,6 @@ const App = () => {
                       ))}
                     </div>
                   </div>
-
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Your Review</label>
                     <textarea 
@@ -2313,7 +2167,6 @@ const App = () => {
                       className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     ></textarea>
                   </div>
-
                   <div className="flex justify-end space-x-4">
                     <button 
                       type="button" 
@@ -2334,7 +2187,6 @@ const App = () => {
             </div>
           </div>
         )}
-
         {/* Notes Modal */}
         {showNotesModal && currentListing && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -2351,11 +2203,9 @@ const App = () => {
                   </button>
                 </div>
               </div>
-
               <div className="p-6">
                 <h3 className="text-lg font-medium text-gray-900 mb-2">{currentListing.address}</h3>
                 <p className="text-gray-600 mb-6">{currentListing.city}</p>
-
                 <div className="mb-6">
                   <label className="block text-gray-700 font-medium mb-2">Your Note</label>
                   <textarea
@@ -2366,7 +2216,6 @@ const App = () => {
                     className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                   ></textarea>
                 </div>
-
                 <div className="flex justify-end space-x-4">
                   <button
                     type="button"
@@ -2390,7 +2239,6 @@ const App = () => {
             </div>
           </div>
         )}
-
         {/* Chat Modal */}
         {showChatModal && listingForChat && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -2407,7 +2255,6 @@ const App = () => {
                   </button>
                 </div>
               </div>
-
               <div className="flex-grow overflow-y-auto p-4 bg-gray-50">
                 {chatMessages.length > 0 ? (
                   <div className="space-y-4">
@@ -2446,7 +2293,6 @@ const App = () => {
                   </div>
                 )}
               </div>
-
               <div className="p-4 border-t border-gray-200">
                 <form onSubmit={handleSendMessage} className="flex space-x-2">
                   <input
@@ -2467,7 +2313,6 @@ const App = () => {
             </div>
           </div>
         )}
-
         {/* Registration Modal */}
         {showRegistrationModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -2484,7 +2329,6 @@ const App = () => {
                   </button>
                 </div>
               </div>
-
               <div className="p-6">
                 <form onSubmit={handleRegistration} className="space-y-4">
                   <div>
@@ -2509,7 +2353,6 @@ const App = () => {
                       className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" 
                     />
                   </div>
-
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Password</label>
                     <input 
@@ -2520,7 +2363,6 @@ const App = () => {
                       className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" 
                     />
                   </div>
-
                   <div className="pt-2">
                     <button 
                       type="submit" 
@@ -2530,7 +2372,6 @@ const App = () => {
                     </button>
                   </div>
                 </form>
-
                 <p className="mt-6 text-center text-gray-600">
                   Already have an account?{' '}
                   <button 
@@ -2548,7 +2389,6 @@ const App = () => {
             </div>
           </div>
         )}
-
         {/* Login Modal */}
         {showLoginModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -2565,7 +2405,6 @@ const App = () => {
                   </button>
                 </div>
               </div>
-
               <div className="p-6">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div>
@@ -2578,7 +2417,6 @@ const App = () => {
                       className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-
                   <div>
                     <label className="block text-gray-700 font-medium mb-2">Password</label>
                     <input
@@ -2589,7 +2427,6 @@ const App = () => {
                       className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-
                   <div className="flex items-center justify-between">
                     <button
                       type="button"
@@ -2599,7 +2436,6 @@ const App = () => {
                       Forgot your password?
                     </button>
                   </div>
-
                   <div className="pt-2">
                     <button
                       type="submit"
@@ -2610,7 +2446,6 @@ const App = () => {
                     </button>
                   </div>
                 </form>
-
                 <p className="mt-6 text-center text-gray-600">
                   Don't have an account?{' '}
                   <button 
@@ -2628,7 +2463,6 @@ const App = () => {
             </div>
           </div>
         )}
-
         {/* Profile Update Modal */}
         {showProfileModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -2684,5 +2518,4 @@ const App = () => {
     </Router>
   );
 };
-
 export default App;
