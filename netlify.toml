@@ -1,0 +1,19 @@
+[build]
+  command = "npm run build"
+  publish = "frontend/build"
+
+# Build environment settings
+[build.environment]
+  NODE_VERSION = "16" # or whatever version you're using
+
+# Redirect rules for frontend app
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Redirect rules for admin app
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/index.html"
+  status = 200

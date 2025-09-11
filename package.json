@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "build": "npm run build:frontend && npm run build:admin",
+    "build": "npm run build:frontend && npm run build:admin && mkdir -p frontend/build/admin && cp -r admin/build/* frontend/build/admin/",
     "build:frontend": "cd frontend && chmod +x node_modules/.bin/react-scripts && npm run build",
-    "build:admin": "cd admin && npm install && chmod +x node_modules/.bin/react-scripts && npm run build"  }
+    "build:admin": "cd admin && npm install && chmod +x node_modules/.bin/react-scripts && npm run build"
+  }
 }
