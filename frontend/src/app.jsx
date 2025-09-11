@@ -74,6 +74,13 @@ const Header = ({ currentView, setCurrentView, isLoggedIn, session, showProfileM
                   >
                     Land
                   </button>
+                  <button
+        type="button"
+        onClick={() => handleCategorySelect('clothing')}
+        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+      >
+        Clothing
+      </button>
                 </div>
               )}
             </div>
@@ -204,6 +211,16 @@ const HomePage = ({ setCurrentView, isLoggedIn, setShowAddForm }) => {
             >
               Browse Land
             </button>
+            <button
+    type="button"
+    onClick={() => {
+      setCurrentView('clothing');
+      navigate('/clothing');
+    }}
+    className="px-8 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow hover:bg-purple-700 transition-colors"
+  >
+    Browse Clothing
+  </button>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
@@ -258,7 +275,25 @@ const HomePage = ({ setCurrentView, isLoggedIn, setShowAddForm }) => {
               View Land
             </button>
           </div>
-        </div>
+    
+        <div className="bg-white p-8 rounded-2xl shadow-lg border border-purple-200">
+    <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+      <i className="fas fa-tshirt text-purple-600 text-2xl"></i>
+    </div>
+    <h3 className="text-2xl font-bold text-gray-900 mb-4">Clothing</h3>
+    <p className="text-gray-600 mb-6">Discover trendy clothing items from various brands and styles.</p>
+    <button
+      type="button"
+      onClick={() => {
+        setCurrentView('clothing');
+        navigate('/clothing');
+      }}
+      className="px-6 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors"
+    >
+      View Clothing
+    </button>
+  </div>
+</div>
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -315,6 +350,7 @@ const CategoryListingsPage = ({
       case 'apartments': return 'fas fa-building';
       case 'cars': return 'fas fa-car';
       case 'land': return 'fas fa-tree';
+      case 'clothing': return 'from-purple-600 to-indigo-700';
       default: return 'fas fa-home';
     }
   };
@@ -520,6 +556,7 @@ const ListingDetailPage = ({
       case 'house': return 'from-blue-600 to-indigo-700';
       case 'car': return 'from-green-600 to-emerald-700';
       case 'land': return 'from-red-600 to-orange-700';
+      case 'clothing': return 'from-purple-600 to-indigo-700';
       default: return 'from-gray-600 to-gray-700';
     }
   };
@@ -528,6 +565,7 @@ const ListingDetailPage = ({
       case 'house': return 'Apartment';
       case 'car': return 'Car';
       case 'land': return 'Land';
+      case 'clothing': return 'from-purple-600 to-indigo-700';
       default: return 'Property';
     }
   };
@@ -628,6 +666,30 @@ const ListingDetailPage = ({
                   </div>
                 </>
               )}
+              {selectedListing.type === 'clothing' && selectedListing.details && (
+    <>
+      <div className="flex items-center bg-blue-50 px-4 py-2 rounded-lg">
+        <i className="fas fa-tshirt text-blue-500 mr-2"></i>
+        <span className="font-medium">{selectedListing.details.brand || 'Unknown Brand'}</span>
+      </div>
+      <div className="flex items-center bg-blue-50 px-4 py-2 rounded-lg">
+        <i className="fas fa-tag text-blue-500 mr-2"></i>
+        <span className="font-medium">{selectedListing.details.category || 'General'}</span>
+      </div>
+      {selectedListing.details.size && (
+        <div className="flex items-center bg-blue-50 px-4 py-2 rounded-lg">
+          <i className="fas fa-ruler text-blue-500 mr-2"></i>
+          <span className="font-medium">Size: {selectedListing.details.size}</span>
+        </div>
+      )}
+      {selectedListing.details.color && (
+        <div className="flex items-center bg-blue-50 px-4 py-2 rounded-lg">
+          <i className="fas fa-palette text-blue-500 mr-2"></i>
+          <span className="font-medium">Color: {selectedListing.details.color}</span>
+        </div>
+      )}
+    </>
+  )}
             </div>
             <div className="mb-8">
               <h3 className="text-xl font-bold text-gray-800 mb-3">Description</h3>
@@ -1595,11 +1657,41 @@ const App = () => {
           </>
         );
         break;
-      default:
-        dynamicFields = null;
-    }
-    return dynamicFields;
-  };
+    case 'clothing':
+      dynamicFields = (
+        <>
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Brand</label>
+            <input type="text" name="brand" placeholder="Brand name" defaultValue={currentListingDetails?.brand} onChange={(e) => setFormDetails({ ...formDetails, details: { ...formDetails.details, brand: e.target.value } })} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Category</label>
+            <select name="category" defaultValue={currentListingDetails?.category} onChange={(e) => setFormDetails({ ...formDetails, details: { ...formDetails.details, category: e.target.value } })} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">Select category</option>
+              <option value="shirts">Shirts</option>
+              <option value="pants">Pants</option>
+              <option value="dresses">Dresses</option>
+              <option value="shoes">Shoes</option>
+              <option value="accessories">Accessories</option>
+              <option value="outerwear">Outerwear</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Size</label>
+            <input type="text" name="size" placeholder="Size (e.g., S, M, L, XL)" defaultValue={currentListingDetails?.size} onChange={(e) => setFormDetails({ ...formDetails, details: { ...formDetails.details, size: e.target.value } })} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Color</label>
+            <input type="text" name="color" placeholder="Color" defaultValue={currentListingDetails?.color} onChange={(e) => setFormDetails({ ...formDetails, details: { ...formDetails.details, color: e.target.value } })} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </>
+      );
+      break;
+    default:
+      dynamicFields = null;
+  }
+  return dynamicFields;
+};
   return (
     <Router>
       <div className="bg-gray-50 min-h-screen">
@@ -1688,6 +1780,28 @@ const App = () => {
               userId={userId}
             />
           } />
+          <Route path="/clothing" element={
+    <CategoryListingsPage 
+      category="clothing"
+      title="Clothing Listings"
+      colorClass="from-purple-600 to-indigo-700"
+      listings={listings}
+      loading={loading}
+      currentImageIndex={currentImageIndex}
+      handleSelectListing={handleSelectListing}
+      handleToggleFavorite={handleToggleFavorite}
+      favorites={favorites}
+      isLoggedIn={isLoggedIn}
+      handleOpenChat={handleOpenChat}
+      setListingForReview={setListingForReview}
+      setShowReviewModal={setShowReviewModal}
+      handleShareListing={handleShareListing}
+      handleOpenNotesModal={handleOpenNotesModal}
+      currentView={currentView}
+      userId={userId}
+    />
+          }/>
+
           <Route path="/listing/:id" element={
             <ListingDetailPage 
               selectedListing={selectedListing}
@@ -1776,6 +1890,8 @@ const App = () => {
                     <option value="house">House</option>
                     <option value="car">Car</option>
                     <option value="land">Land</option>
+                    <option value="clothing">Clothing</option>
+
                   </select>
                 </div>
                 <form onSubmit={handleAddListing} className="space-y-4">

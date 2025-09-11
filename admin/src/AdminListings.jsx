@@ -14,7 +14,8 @@ import {
   FaEnvelope,
   FaChartBar,
   FaCog,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaTshirt // Added icon for clothing
 } from 'react-icons/fa';
 
 const AdminListings = () => {
@@ -58,7 +59,9 @@ const AdminListings = () => {
         listing.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         listing.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         listing.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        listing.description?.toLowerCase().includes(searchTerm.toLowerCase())
+        listing.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (listing.type === 'clothing' && listing.brand?.toLowerCase().includes(searchTerm.toLowerCase())) || // Added brand search for clothing
+        (listing.type === 'clothing' && listing.category?.toLowerCase().includes(searchTerm.toLowerCase())) // Added category search for clothing
       );
     }
     if (statusFilter !== 'all') {
@@ -156,6 +159,23 @@ const AdminListings = () => {
     { name: 'Analytics', href: '/admin/analytics', icon: FaChartBar, current: false },
     { name: 'Settings', href: '/admin/settings', icon: FaCog, current: false },
   ];
+  
+  // Get category specific information
+  const getCategoryInfo = (listing) => {
+    if (listing.type === 'clothing') {
+      return {
+        display: listing.brand || 'Clothing',
+        subDisplay: listing.category ? `${listing.category} ${listing.size ? `• Size: ${listing.size}` : ''}` : '',
+        icon: <FaTshirt className="mr-1" />
+      };
+    } else {
+      return {
+        display: listing.type,
+        subDisplay: '',
+        icon: null
+      };
+    }
+  };
   
   return (
     <div className="flex h-screen bg-gray-50 font-inter">
@@ -270,6 +290,7 @@ const AdminListings = () => {
                 <option value="apartment">Apartment</option>
                 <option value="car">Car</option>
                 <option value="land">Land</option>
+                <option value="clothing">Clothing</option> {/* Added clothing option */}
               </select>
             </div>
           </div>
@@ -295,49 +316,62 @@ const AdminListings = () => {
                 </thead>
                 <tbody>
                   {filteredListings.length > 0 ? (
-                    filteredListings.map((listing) => (
-                      <tr key={listing.id}>
-                        <td>#{listing.id}</td>
-                        <td>
-                          <div className="font-medium text-gray-900">
-                            {listing.title || `${listing.type} in ${listing.city}`}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {listing.address}, {listing.city}
-                          </div>
-                        </td>
-                        <td>
-                          <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
-                            {listing.type}
-                          </span>
-                        </td>
-                        <td className="font-medium text-gray-900">
-                          ${listing.price ? listing.price.toLocaleString() : 'N/A'}
-                        </td>
-                        <td>{getStatusBadge(listing.status)}</td>
-                        <td className="text-gray-500">
-                          {formatDate(listing.created_at)}
-                        </td>
-                        <td>
-                          <div className="action-buttons">
-                            <button 
-                              onClick={() => navigate(`/admin/listings/edit/${listing.id}`)}
-                              className="action-btn edit"
-                              title="Edit"
-                            >
-                              <FaEdit />
-                            </button>
-                            <button 
-                              onClick={() => handleDeleteListing(listing.id)}
-                              className="action-btn delete"
-                              title="Delete"
-                            >
-                              <FaTrash />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
+                    filteredListings.map((listing) => {
+                      const categoryInfo = getCategoryInfo(listing);
+                      return (
+                        <tr key={listing.id}>
+                          <td>#{listing.id}</td>
+                          <td>
+                            <div className="font-medium text-gray-900">
+                              {listing.title || `${listing.type} in ${listing.city}`}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {listing.type === 'clothing' 
+                                ? (listing.brand || 'Clothing Item') 
+                                : `${listing.address}, ${listing.city}`}
+                            </div>
+                          </td>
+                          <td>
+                            <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full flex items-center">
+                              {categoryInfo.icon}
+                              {categoryInfo.display}
+                            </span>
+                            {categoryInfo.subDisplay && (
+                              <div className="text-xs text-gray-500 mt-1">
+                                {categoryInfo.subDisplay}
+                              </div>
+                            )}
+                          </td>
+                          <td className="font-medium text-gray-900">
+                            {listing.type === 'clothing' 
+                              ? `$${listing.price ? listing.price.toLocaleString() : 'N/A'}`
+                              : `$${listing.price ? listing.price.toLocaleString() : 'N/A'}`}
+                          </td>
+                          <td>{getStatusBadge(listing.status)}</td>
+                          <td className="text-gray-500">
+                            {formatDate(listing.created_at)}
+                          </td>
+                          <td>
+                            <div className="action-buttons">
+                              <button 
+                                onClick={() => navigate(`/admin/listings/edit/${listing.id}`)}
+                                className="action-btn edit"
+                                title="Edit"
+                              >
+                                <FaEdit />
+                              </button>
+                              <button 
+                                onClick={() => handleDeleteListing(listing.id)}
+                                className="action-btn delete"
+                                title="Delete"
+                              >
+                                <FaTrash />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
                   ) : (
                     <tr>
                       <td colSpan="7" className="text-center py-8 text-gray-500">
