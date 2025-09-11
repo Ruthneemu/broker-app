@@ -1,5 +1,6 @@
 {
   "name": "admin",
+  "homepage": "/admin",
   "version": "1.0.0",
   "main": "admin.jsx",
   "scripts": {
