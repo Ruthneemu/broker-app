@@ -1,6 +1,6 @@
 // AdminResetPassword.js
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 
 const AdminResetPassword = () => {
@@ -9,16 +9,23 @@ const AdminResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if we have the access token in the URL
-    const accessToken = searchParams.get('access_token');
-    if (!accessToken) {
-      setError('Invalid or expired reset link');
+    // Parse the hash fragment to get the access token and other parameters
+    const hash = location.hash.substring(1); // Remove the leading '#'
+    const params = new URLSearchParams(hash);
+    
+    const accessToken = params.get('access_token');
+    const type = params.get('type');
+    
+    console.log('URL Parameters:', { accessToken, type }); // Debug log
+    
+    if (!accessToken || type !== 'recovery') {
+      setError('Invalid or expired reset link. Please request a new password reset.');
     }
-  }, [searchParams]);
+  }, [location]);
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
@@ -37,6 +44,28 @@ const AdminResetPassword = () => {
     setError('');
     
     try {
+      // Parse the hash fragment to get the access token and refresh token
+      const hash = location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+      
+      if (!accessToken) {
+        throw new Error('Invalid reset link');
+      }
+      
+      // Set the session with the tokens from the URL
+      const { error: sessionError } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
+      
+      if (sessionError) {
+        throw sessionError;
+      }
+      
+      // Now update the password
       const { error } = await supabase.auth.updateUser({
         password: password
       });
@@ -51,6 +80,7 @@ const AdminResetPassword = () => {
         navigate('/admin/login');
       }, 3000);
     } catch (err) {
+      console.error('Reset error:', err); // Debug log
       setError(err.message || 'Failed to reset password');
     } finally {
       setLoading(false);
