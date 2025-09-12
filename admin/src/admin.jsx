@@ -9,6 +9,7 @@ import AdminUsers from './AdminUsers';
 import AdminInquiries from './AdminInquiries';
 import AdminSettings from './AdminSettings';
 import AdminAnalytics from './AdminAnalytics';
+import AdminResetPassword from './AdminResetPassword';
 import './admin.css';
 
 // Define ProtectedRoute inside the App component
@@ -64,6 +65,11 @@ function App() {
             <Route path="/admin/settings" element={
               <ProtectedRoute>
                 <AdminSettings />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/reset-password" element={
+            <<ProtectedRoute>
+                <AdminResetPassword />
               </ProtectedRoute>
             } />
             {/* Redirect root to admin login */}
