@@ -17,15 +17,12 @@ function App() {
   // Protected route component for admin pages
   const ProtectedRoute = ({ children }) => {
     const { user, isAdmin, loading } = useAuth();
-
     if (loading) {
       return <div className="loading-screen">Loading...</div>;
     }
-
     if (!user || !isAdmin) {
       return <Navigate to="/admin/login" />;
     }
-
     return children;
   };
 
@@ -36,6 +33,10 @@ function App() {
           <Routes>
             {/* Admin login page - this is the first page users will see */}
             <Route path="/admin/login" element={<AdminLogin />} />
+            
+            {/* Reset password page - publicly accessible */}
+            <Route path="/admin/reset-password" element={<AdminResetPassword />} />
+            
             {/* Protected admin routes - only accessible after login */}
             <Route path="/admin/dashboard" element={
               <ProtectedRoute>
@@ -67,13 +68,10 @@ function App() {
                 <AdminSettings />
               </ProtectedRoute>
             } />
-            <Route path="/admin/reset-password" element={
-            <<ProtectedRoute>
-                <AdminResetPassword />
-              </ProtectedRoute>
-            } />
+            
             {/* Redirect root to admin login */}
             <Route path="/" element={<Navigate to="/admin/login" />} />
+            
             {/* Catch-all route - redirect to admin login */}
             <Route path="*" element={<Navigate to="/admin/login" />} />
           </Routes>
