@@ -34,8 +34,8 @@ function App() {
             {/* Admin login page - this is the first page users will see */}
             <Route path="/admin/login" element={<AdminLogin />} />
             
-            {/* Reset password page - publicly accessible */}
-            <Route path="/admin/reset-password" element={<AdminResetPassword />} />
+            {/* Reset password page - publicly accessible, with hash-based routing */}
+            <Route path="/admin/reset-password/*" element={<AdminResetPassword />} />
             
             {/* Protected admin routes - only accessible after login */}
             <Route path="/admin/dashboard" element={
