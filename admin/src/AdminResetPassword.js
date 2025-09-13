@@ -26,8 +26,9 @@ const AdminResetPassword = () => {
           return;
         }
         
-        // Verify this is a password recovery session
-        if (session.user && window.location.hash.includes('type=recovery')) {
+        // Check if this is a recovery session by looking at the URL hash
+        const hash = window.location.hash;
+        if (hash && hash.includes('type=recovery')) {
           setAuthLoading(false);
         } else {
           navigate('/admin/login');
