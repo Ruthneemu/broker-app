@@ -10,9 +10,9 @@ import AdminInquiries from './AdminInquiries';
 import AdminSettings from './AdminSettings';
 import AdminAnalytics from './AdminAnalytics';
 import AdminResetPassword from './AdminResetPassword';
+import AuthRedirectHandler from './AuthRedirectHandler'; // Import the new component
 import './admin.css';
 
-// Define ProtectedRoute inside the App component
 function App() {
   // Protected route component for admin pages
   const ProtectedRoute = ({ children }) => {
@@ -29,13 +29,14 @@ function App() {
   return (
     <Router>
       <AuthProvider>
+        <AuthRedirectHandler /> {/* Add this component */}
         <div className="bg-gray-50 min-h-screen">
           <Routes>
             {/* Admin login page - this is the first page users will see */}
             <Route path="/admin/login" element={<AdminLogin />} />
             
-            {/* Reset password page - publicly accessible, with hash-based routing */}
-            <Route path="/admin/reset-password/*" element={<AdminResetPassword />} />
+            {/* Reset password page - publicly accessible */}
+            <Route path="/admin/reset-password" element={<AdminResetPassword />} />
             
             {/* Protected admin routes - only accessible after login */}
             <Route path="/admin/dashboard" element={
