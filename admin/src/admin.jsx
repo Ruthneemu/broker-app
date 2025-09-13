@@ -10,7 +10,7 @@ import AdminInquiries from './AdminInquiries';
 import AdminSettings from './AdminSettings';
 import AdminAnalytics from './AdminAnalytics';
 import AdminResetPassword from './AdminResetPassword';
-import AuthRedirectHandler from './AuthRedirectHandler'; // Import the new component
+import AuthHandler from './AuthHandler'; // Import the new component
 import './admin.css';
 
 function App() {
@@ -29,16 +29,18 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <AuthRedirectHandler /> {/* Add this component */}
         <div className="bg-gray-50 min-h-screen">
           <Routes>
-            {/* Admin login page - this is the first page users will see */}
+            {/* Admin login page */}
             <Route path="/admin/login" element={<AdminLogin />} />
             
-            {/* Reset password page - publicly accessible */}
+            {/* Auth handler route - processes Supabase redirects */}
+            <Route path="/admin/auth-handler" element={<AuthHandler />} />
+            
+            {/* Reset password page */}
             <Route path="/admin/reset-password" element={<AdminResetPassword />} />
             
-            {/* Protected admin routes - only accessible after login */}
+            {/* Protected admin routes */}
             <Route path="/admin/dashboard" element={
               <ProtectedRoute>
                 <AdminDashboard />
@@ -73,7 +75,7 @@ function App() {
             {/* Redirect root to admin login */}
             <Route path="/" element={<Navigate to="/admin/login" />} />
             
-            {/* Catch-all route - redirect to admin login */}
+            {/* Catch-all route */}
             <Route path="*" element={<Navigate to="/admin/login" />} />
           </Routes>
         </div>
