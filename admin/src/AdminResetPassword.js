@@ -15,7 +15,6 @@ const AdminResetPassword = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    // Check if user is authenticated
     const checkAuth = async () => {
       try {
         // Get current session
@@ -26,13 +25,7 @@ const AdminResetPassword = () => {
           return;
         }
         
-        // Check if this is a recovery session by looking at the URL hash
-        const hash = window.location.hash;
-        if (hash && hash.includes('type=recovery')) {
-          setAuthLoading(false);
-        } else {
-          navigate('/admin/login');
-        }
+        setAuthLoading(false);
       } catch (err) {
         console.error('Auth check error:', err);
         navigate('/admin/login');
