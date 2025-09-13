@@ -1,7 +1,8 @@
 // AdminResetPassword.js
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
+import { useAuth } from './AuthContext';
 
 const AdminResetPassword = () => {
   const [password, setPassword] = useState('');
@@ -9,25 +10,38 @@ const AdminResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const location = useLocation();
+  const [authLoading, setAuthLoading] = useState(true);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    // Parse the hash fragment to get the access token and other parameters
-    const hash = location.hash.substring(1); // Remove the leading '#'
-    const params = new URLSearchParams(hash);
-    
-    const accessToken = params.get('access_token');
-    const type = params.get('type');
-    
-    console.log('URL Parameters:', { accessToken, type }); // Debug log
-    
-    if (!accessToken || type !== 'recovery') {
-      setError('Invalid or expired reset link. Please request a new password reset.');
-    }
-  }, [location]);
+    // Check if user is authenticated
+    const checkAuth = async () => {
+      try {
+        // Get current session
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          navigate('/admin/login');
+          return;
+        }
+        
+        // Verify this is a password recovery session
+        if (session.user && window.location.hash.includes('type=recovery')) {
+          setAuthLoading(false);
+        } else {
+          navigate('/admin/login');
+        }
+      } catch (err) {
+        console.error('Auth check error:', err);
+        navigate('/admin/login');
+      }
+    };
 
-  const handleResetPassword = async (e) => {
+    checkAuth();
+  }, [navigate]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (password !== confirmPassword) {
@@ -44,28 +58,6 @@ const AdminResetPassword = () => {
     setError('');
     
     try {
-      // Parse the hash fragment to get the access token and refresh token
-      const hash = location.hash.substring(1);
-      const params = new URLSearchParams(hash);
-      
-      const accessToken = params.get('access_token');
-      const refreshToken = params.get('refresh_token');
-      
-      if (!accessToken) {
-        throw new Error('Invalid reset link');
-      }
-      
-      // Set the session with the tokens from the URL
-      const { error: sessionError } = await supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      });
-      
-      if (sessionError) {
-        throw sessionError;
-      }
-      
-      // Now update the password
       const { error } = await supabase.auth.updateUser({
         password: password
       });
@@ -75,17 +67,24 @@ const AdminResetPassword = () => {
       }
       
       setSuccess(true);
-      // Redirect to login after successful reset
+      // Redirect to login after a delay
       setTimeout(() => {
         navigate('/admin/login');
       }, 3000);
     } catch (err) {
-      console.error('Reset error:', err); // Debug log
       setError(err.message || 'Failed to reset password');
     } finally {
       setLoading(false);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
@@ -102,7 +101,9 @@ const AdminResetPassword = () => {
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
             <div className="flex">
               <div className="flex-shrink-0">
-                <i className="fas fa-exclamation-circle text-red-500"></i>
+                <svg className="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
               </div>
               <div className="ml-3">
                 <p className="text-sm text-red-700">{error}</p>
@@ -115,7 +116,9 @@ const AdminResetPassword = () => {
           <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded">
             <div className="flex">
               <div className="flex-shrink-0">
-                <i className="fas fa-check-circle text-green-500"></i>
+                <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
               </div>
               <div className="ml-3">
                 <p className="text-sm text-green-700">
@@ -125,7 +128,7 @@ const AdminResetPassword = () => {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleResetPassword} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 New Password
@@ -134,13 +137,13 @@ const AdminResetPassword = () => {
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="new-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="••••••••••"
               />
+              <p className="mt-1 text-sm text-gray-500">Must be at least 6 characters</p>
             </div>
             
             <div>
@@ -151,7 +154,6 @@ const AdminResetPassword = () => {
                 id="confirm-password"
                 name="confirm-password"
                 type="password"
-                autoComplete="new-password"
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -166,23 +168,19 @@ const AdminResetPassword = () => {
                 disabled={loading}
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
               >
-                {loading ? 'Resetting...' : 'Reset Password'}
+                {loading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Resetting...
+                  </>
+                ) : 'Reset Password'}
               </button>
             </div>
           </form>
         )}
-        
-        <div className="text-center mt-6">
-          <p className="text-sm text-gray-600">
-            Remember your password?{' '}
-            <button 
-              onClick={() => navigate('/admin/login')}
-              className="font-medium text-blue-600 hover:text-blue-500"
-            >
-              Back to login
-            </button>
-          </p>
-        </div>
       </div>
     </div>
   );
