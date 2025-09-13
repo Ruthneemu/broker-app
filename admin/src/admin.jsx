@@ -10,7 +10,7 @@ import AdminInquiries from './AdminInquiries';
 import AdminSettings from './AdminSettings';
 import AdminAnalytics from './AdminAnalytics';
 import AdminResetPassword from './AdminResetPassword';
-import AuthHandler from './AuthHandler'; // Import the new component
+import AuthHandler from './AuthHandler';
 import './admin.css';
 
 function App() {
