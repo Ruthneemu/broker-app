@@ -44,8 +44,8 @@ const RootRedirect = () => {
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
+    <AuthProvider>
+      <Router>
         <div className="bg-gray-50 min-h-screen">
           <Routes>
             {/* Public Routes */}
@@ -85,13 +85,13 @@ function App() {
               </ProtectedRoute>
             } />
 
-            {/* Root and Catch-all Routes */}
+            {/* Root and Catch-all */}
             <Route path="/" element={<RootRedirect />} />
             <Route path="*" element={<Navigate to="/admin/login" replace />} />
           </Routes>
         </div>
-      </AuthProvider>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 }
 
