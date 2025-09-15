@@ -8,14 +8,4 @@
   <body>
     <div id="root"></div>
   </body>
-  <script>
-  // Handle client-side routing for Netlify
-  (function() {
-    var redirect = sessionStorage.redirect;
-    delete sessionStorage.redirect;
-    if (redirect && redirect != location.href) {
-      history.replaceState(null, null, redirect);
-    }
-  })();
-</script>
 </html>
