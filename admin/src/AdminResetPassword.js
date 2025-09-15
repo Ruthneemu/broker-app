@@ -14,18 +14,9 @@ const AdminResetPassword = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const extractTokens = () => {
       try {
-        // First, check if we already have a session
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session) {
-          // We have an existing session, no need to extract tokens
-          setAuthLoading(false);
-          return;
-        }
-        
-        // If no session, extract tokens from URL hash
+        // Extract tokens from URL hash
         const hash = window.location.hash.substring(1);
         const params = new URLSearchParams(hash);
         
@@ -38,7 +29,6 @@ const AdminResetPassword = () => {
         console.log('Type:', type);
         
         if (type === 'recovery' && accessToken && refreshToken) {
-          // Store tokens for later use
           setTokens({ accessToken, refreshToken });
           setAuthLoading(false);
         } else {
@@ -46,14 +36,14 @@ const AdminResetPassword = () => {
           setAuthLoading(false);
         }
       } catch (err) {
-        console.error('Auth check error:', err);
+        console.error('Error extracting tokens:', err);
         setError('Error processing reset link');
         setAuthLoading(false);
       }
     };
     
-    checkAuth();
-  }, [navigate]);
+    extractTokens();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
