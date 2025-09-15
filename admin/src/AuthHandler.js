@@ -21,11 +21,24 @@ const AuthHandler = () => {
         
         if (type === 'recovery') {
           // This is a password recovery flow
-          // Set the session using the tokens in the URL
-          const { error } = await supabase.auth.getSession();
+          // Extract the tokens from the URL
+          const accessToken = params.get('access_token');
+          const refreshToken = params.get('refresh_token');
+          
+          if (!accessToken || !refreshToken) {
+            console.error('Missing tokens in URL');
+            navigate('/admin/login?error=missing_tokens');
+            return;
+          }
+
+          // Set the session using the tokens
+          const { error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
           
           if (error) {
-            console.error('Error getting session:', error);
+            console.error('Error setting session:', error);
             navigate('/admin/login?error=session_error');
             return;
           }
@@ -41,7 +54,7 @@ const AuthHandler = () => {
         navigate('/admin/login?error=auth_error');
       }
     };
-
+    
     handleAuth();
   }, [navigate]);
 
