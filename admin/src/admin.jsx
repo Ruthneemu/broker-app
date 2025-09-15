@@ -12,27 +12,44 @@ import AdminResetPassword from './AdminResetPassword';
 import AuthHandler from './AuthHandler';
 import './admin.css';
 
-function App() {
-  const ProtectedRoute = ({ children }) => {
-    const { user, isAdmin, loading } = useAuth();
-    if (loading) {
-      return <div className="loading-screen">Loading...</div>;
-    }
-    if (!user || !isAdmin) {
-      return <Navigate to="/admin/login" />;
-    }
-    return children;
-  };
+// Move ProtectedRoute outside of App component
+const ProtectedRoute = ({ children }) => {
+  const { user, isAdmin, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="loading-screen">Loading...</div>;
+  }
+  
+  if (!user || !isAdmin) {
+    return <Navigate to="/admin/login" replace />;
+  }
+  
+  return children;
+};
 
+// Add a root redirect component
+const RootRedirect = () => {
+  const { user, isAdmin } = useAuth();
+  
+  if (user && isAdmin) {
+    return <Navigate to="/admin/dashboard" replace />;
+  }
+  
+  return <Navigate to="/admin/login" replace />;
+};
+
+function App() {
   return (
     <Router>
       <AuthProvider>
         <div className="bg-gray-50 min-h-screen">
           <Routes>
+            {/* Public Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/reset-password" element={<AdminResetPassword />} />
             <Route path="/admin/auth-handler" element={<AuthHandler />} />
-
+            
+            {/* Protected Routes */}
             <Route path="/admin/dashboard" element={
               <ProtectedRoute>
                 <AdminDashboard />
@@ -63,9 +80,10 @@ function App() {
                 <AdminSettings />
               </ProtectedRoute>
             } />
-
-            <Route path="/" element={<Navigate to="/admin/login" />} />
-            <Route path="*" element={<Navigate to="/admin/login" />} />
+            
+            {/* Root and Catch-all Routes */}
+            <Route path="/" element={<RootRedirect />} />
+            <Route path="*" element={<Navigate to="/admin/login" replace />} />
           </Routes>
         </div>
       </AuthProvider>
