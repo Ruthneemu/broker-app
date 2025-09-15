@@ -34,9 +34,6 @@ function App() {
             {/* Admin login page */}
             <Route path="/admin/login" element={<AdminLogin />} />
             
-            {/* Auth handler route - processes Supabase redirects */}
-            <Route path="/admin/auth-handler" element={<AuthHandler />} />
-            
             {/* Reset password page */}
             <Route path="/admin/reset-password" element={<AdminResetPassword />} />
             
