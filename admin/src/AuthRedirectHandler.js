@@ -31,7 +31,7 @@ const AuthRedirectHandler = () => {
           }
           
           // Redirect to the reset password page
-          navigate('/AdminResetPassword');
+          navigate('/admin/src/AdminResetPassword');
         }
       }
     };
