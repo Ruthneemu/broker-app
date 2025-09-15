@@ -1,4 +1,3 @@
-// App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './AuthContext';
@@ -14,7 +13,6 @@ import AuthHandler from './AuthHandler';
 import './admin.css';
 
 function App() {
-  // Protected route component for admin pages
   const ProtectedRoute = ({ children }) => {
     const { user, isAdmin, loading } = useAuth();
     if (loading) {
@@ -31,13 +29,10 @@ function App() {
       <AuthProvider>
         <div className="bg-gray-50 min-h-screen">
           <Routes>
-            {/* Admin login page */}
             <Route path="/admin/login" element={<AdminLogin />} />
-            
-            {/* Reset password page */}
             <Route path="/admin/reset-password" element={<AdminResetPassword />} />
-            
-            {/* Protected admin routes */}
+            <Route path="/admin/auth-handler" element={<AuthHandler />} />
+
             <Route path="/admin/dashboard" element={
               <ProtectedRoute>
                 <AdminDashboard />
@@ -68,11 +63,8 @@ function App() {
                 <AdminSettings />
               </ProtectedRoute>
             } />
-            
-            {/* Redirect root to admin login */}
+
             <Route path="/" element={<Navigate to="/admin/login" />} />
-            
-            {/* Catch-all route */}
             <Route path="*" element={<Navigate to="/admin/login" />} />
           </Routes>
         </div>
