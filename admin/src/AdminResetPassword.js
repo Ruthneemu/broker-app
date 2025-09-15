@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
-import { useAuth } from './AuthContext';
 
 const AdminResetPassword = () => {
   const [password, setPassword] = useState('');
@@ -11,27 +10,48 @@ const AdminResetPassword = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
+  const [tokens, setTokens] = useState(null);
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Get current session
+        // First, check if we already have a session
         const { data: { session } } = await supabase.auth.getSession();
         
-        if (!session) {
-          navigate('/admin/login');
+        if (session) {
+          // We have an existing session, no need to extract tokens
+          setAuthLoading(false);
           return;
         }
         
-        setAuthLoading(false);
+        // If no session, extract tokens from URL hash
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        
+        const accessToken = params.get('access_token');
+        const refreshToken = params.get('refresh_token');
+        const type = params.get('type');
+        
+        console.log('Access token found:', !!accessToken);
+        console.log('Refresh token found:', !!refreshToken);
+        console.log('Type:', type);
+        
+        if (type === 'recovery' && accessToken && refreshToken) {
+          // Store tokens for later use
+          setTokens({ accessToken, refreshToken });
+          setAuthLoading(false);
+        } else {
+          setError('Invalid or expired reset link');
+          setAuthLoading(false);
+        }
       } catch (err) {
         console.error('Auth check error:', err);
-        navigate('/admin/login');
+        setError('Error processing reset link');
+        setAuthLoading(false);
       }
     };
-
+    
     checkAuth();
   }, [navigate]);
 
@@ -52,6 +72,19 @@ const AdminResetPassword = () => {
     setError('');
     
     try {
+      // If we have tokens from URL, set the session first
+      if (tokens) {
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: tokens.accessToken,
+          refresh_token: tokens.refreshToken,
+        });
+        
+        if (sessionError) {
+          throw sessionError;
+        }
+      }
+      
+      // Now update the password
       const { error } = await supabase.auth.updateUser({
         password: password
       });
