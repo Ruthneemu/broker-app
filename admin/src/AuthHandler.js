@@ -31,7 +31,7 @@ const AuthHandler = () => {
           }
           
           // Redirect to the reset password page
-          navigate('/admin/src/AdminResetPassword');
+          navigate('/admin/reset-password');
         } else {
           // Not a recovery flow, redirect to login
           navigate('/admin/login');
