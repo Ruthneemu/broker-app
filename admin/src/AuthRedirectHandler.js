@@ -30,12 +30,12 @@ const AuthRedirectHandler = () => {
             return;
           }
           
-          // Redirect to the reset password page
-          navigate('/admin/src/AdminResetPassword');
+          // FIXED: Navigate to the correct route path, not file path
+          navigate('/admin/reset-password');
         }
       }
     };
-
+    
     handleHashFragment();
   }, [location, navigate]);
 
