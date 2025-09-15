@@ -1,18 +1,26 @@
-// In AuthContext.js
-const AuthProvider = ({ children }) => {
+// AuthContext.js
+import React, { createContext, useContext, useState, useEffect } from 'react';
+
+const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Add your auth initialization logic here
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setIsAdmin(user && user.email === "admin@example.com"); // Your admin check
+    // Your authentication logic here
+    // Example:
+    const checkAuth = () => {
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+        setIsAdmin(true); // Your admin check logic
+      }
       setLoading(false);
-    });
-
-    return () => unsubscribe();
+    };
+    
+    checkAuth();
   }, []);
 
   return (
@@ -20,4 +28,13 @@ const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
+};
+
+// THIS IS THE MISSING EXPORT
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };
