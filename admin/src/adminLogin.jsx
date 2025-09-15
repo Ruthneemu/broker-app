@@ -21,8 +21,8 @@ const handleForgotPassword = async (e) => {
   
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-      // Use auth-handler route to process the tokens
-      redirectTo: `${window.location.origin}/admin/auth-handler`,
+      // Use reset-password route directly
+      redirectTo: `${window.location.origin}/admin/reset-password`,
     });
     
     if (error) {
