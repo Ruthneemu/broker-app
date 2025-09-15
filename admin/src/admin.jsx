@@ -52,7 +52,7 @@ function App() {
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/reset-password" element={<AdminResetPassword />} />
             <Route path="/admin/auth-handler" element={<AuthHandler />} />
-
+            
             {/* Protected Routes */}
             <Route path="/admin/dashboard" element={
               <ProtectedRoute>
@@ -84,10 +84,10 @@ function App() {
                 <AdminSettings />
               </ProtectedRoute>
             } />
-
+            
             {/* Root and Catch-all */}
-            <Route path="/" element={<RootRedirect />} />
-            <Route path="*" element={<Navigate to="/admin/login" replace />} />
+            <Route path="/" element={<RootRedirect />} />  {/* This is already in your code */}
+            <Route path="*" element={<Navigate to="/" replace />} />  {/* CHANGE THIS LINE */}
           </Routes>
         </div>
       </Router>
