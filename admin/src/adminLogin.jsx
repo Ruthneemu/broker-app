@@ -16,28 +16,29 @@ const AdminLogin = () => {
   const [resetSuccess, setResetSuccess] = useState(false);
   const navigate = useNavigate();
 
-  const handleForgotPassword = async (e) => {
-    e.preventDefault();
-    setResetLoading(true);
-    setError('');
+  // In handleForgotPassword function
+const handleForgotPassword = async (e) => {
+  e.preventDefault();
+  setResetLoading(true);
+  setError('');
+  
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      // FIXED: Use dedicated reset-password route instead of auth-handler
+      redirectTo: `${window.location.origin}/admin/reset-password`,
+    });
     
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        // Updated to use auth-handler route instead of reset-password
-        redirectTo: `${window.location.origin}/admin/auth-handler`,
-      });
-      
-      if (error) {
-        throw error;
-      }
-      
-      setResetSuccess(true);
-    } catch (err) {
-      setError(err.message || 'Failed to send reset email');
-    } finally {
-      setResetLoading(false);
+    if (error) {
+      throw error;
     }
-  };
+    
+    setResetSuccess(true);
+  } catch (err) {
+    setError(err.message || 'Failed to send reset email');
+  } finally {
+    setResetLoading(false);
+  }
+};
 
   const handleLogin = async (e) => {
     e.preventDefault();
